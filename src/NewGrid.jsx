@@ -17,7 +17,7 @@ export const NewGrid = () => {
     
         <div className='h-18 text-center  w-full bg-slate-400 col-span-1 flex items-center justify-center '></div>
         <div className='h-18 text-center w-full bg-slate-400 col-span-3 flex items-center justify-center'>Unidade Curricular</div>
-        <div className='h-18 text-center w-full bg-slate-400 flex items-center justify-center text-xs'>tipo avaliação</div>
+        <div className='h-18 text-center w-full bg-slate-400 flex items-center justify-center text-xs'>Tipo avaliação</div>
         <div className='h-18 text-center w-full bg-slate-400 flex items-center justify-center text-xs'>Elemento</div>
         <div className='h-18 text-center w-full bg-slate-400 flex items-center justify-center text-xs'>Ponderação</div>
         <div className='h-18 text-center w-full bg-slate-400 flex items-center justify-center text-xs'>Data</div>

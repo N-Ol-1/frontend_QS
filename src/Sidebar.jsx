@@ -1,81 +1,101 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { NewGrid } from './NewGrid';  // Import the named export
 
-  export const Sidebar = () => {
-  // States to manage dropdown visibility
-  const [isFirstOptionExpanded, setIsFirstOptionExpanded] = useState(false);
-  const [isFirstSubOptionExpanded, setIsFirstSubOptionExpanded] = useState(false);
-  const [isSidebarVisible,setSidebarVisible]=useState(false);
+export const Sidebar = ({ isSidebarVisible, setSidebarVisible }) => {
+  // States for managing dropdown visibility and degrees data
+  const [degrees, setDegrees] = useState([]); // State to store degree data
+  const [selectedMap, setSelectedMap] = useState(null); // Store selected map
+  const [error, setError] = useState(false); // To handle errors if the API call fails
 
-  // Toggle functions
-  const toggleFirstOption = () => setIsFirstOptionExpanded(!isFirstOptionExpanded);
-  const toggleFirstSubOption = () => setIsFirstSubOptionExpanded(!isFirstSubOptionExpanded);
+  // Fetch degrees data from the API
+  useEffect(() => {
+    const fetchDegrees = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8080/api/v1/degrees'); // API endpoint
+        if (!response.ok) throw new Error('Failed to fetch degrees');
+        const data = await response.json();
+        console.log("Degrees Data: ", data);  // Log the data for inspection
+        setDegrees(data); // Store the degree data
+      } catch (error) {
+        console.error('Error fetching degrees:', error);
+        setError(true); // Handle error state
+      }
+    };
+
+    fetchDegrees();
+  }, []);
+
+  // Function to toggle the visibility of evaluations for a specific degree
+  const toggleMaps = (degreeId) => {
+    setDegrees((prevDegrees) =>
+      prevDegrees.map((degree) => {
+        if (degree.id === degreeId) {
+          // Log the toggle action
+          console.log(`Toggling maps for degree ${degreeId}`);
+          return { ...degree, isMapsVisible: !degree.isMapsVisible };
+        }
+        return degree;
+      })
+    );
+  };
+
+    // Handle when a map is clicked
+    const handleMapClick = (map) => {
+      setSelectedMap(map); // Set the selected map to state
+      setSidebarMap(false); // Optionally close the sidebar after clicking
+    };
 
   return (
     <div>
-        {/* Toggle Button for Sidebar */}
-      {!isSidebarVisible && (
-        <button
-          className="text-2xl p-2 rounded-lg  top-4 left-4 absolute text-black"
-          onClick={() => setSidebarVisible(true)}
-        >
-          Cursos
-        </button>
-      )}
-
-
-
-    {isSidebarVisible && (
-    <div className="w-64 bg-white h-screen p-4 border-r absolute ">
-        <div className='grid grid-cols-2'>
-                <h2 className="text-xl font-semibold mb-4">Sidebar</h2>
-                <button 
-                
-                className='text-3xl justify-self-end  text-right'
-                onClick={()=>{setSidebarVisible(false)}}
-                
-                >
-                x    
-                </button>    
-
-        </div>
-      
-  
-        {/* Option 1 with Dropdown */}
-        <div className="cursor-pointer  p-2 rounded-lg mb-2" onClick={toggleFirstOption}>
-          Option 1 {isFirstOptionExpanded ? '▲' : '▼'}
-        </div>
-        {isFirstOptionExpanded && (
-          <div className="ml-4">
-            <div
-              className="cursor-pointer p-2 rounded-lg mb-1"
-              onClick={toggleFirstSubOption}
+      {/* Sidebar */}
+      {isSidebarVisible && (
+        <div className="w-64 bg-white h-screen p-4 border-r absolute">
+          <div className="grid grid-cols-2">
+            <h2 className="text-xl font-semibold mb-4">Cursos</h2>
+            <button
+              className="text-3xl justify-self-end text-right"
+              onClick={() => setSidebarVisible(false)}
             >
-              Sub Option 1 {isFirstSubOptionExpanded ? '▲' : '▼'}
-            </div>
-  
-            {/* Nested Dropdown for Sub Option 1 */}
-            {isFirstSubOptionExpanded && (
-              <div className="ml-4">
-                <div className="cursor-pointer  p-2 rounded-lg mb-1">Nested Option 1</div>
-                <div className="cursor-pointer  p-2 rounded-lg mb-1">Nested Option 2</div>
-              </div>
-            )}
-  
-            <div className="cursor-pointer  p-2 rounded-lg mb-1">Sub Option 2</div>
-            <div className="cursor-pointer  p-2 rounded-lg mb-1">Sub Option 3</div>
-            <div className="cursor-pointer  p-2 rounded-lg mb-1">Sub Option 4</div>
+              x
+            </button>
           </div>
-        )}
-  
-        {/* Other Main Options */}
-        <div className="cursor-pointer  p-2 rounded-lg mb-2">Option 2</div>
-        <div className="cursor-pointer  p-2 rounded-lg mb-2">Option 3</div>
-        <div className="cursor-pointer  p-2 rounded-lg">Option 4</div>
-      </div>)};
+
+          {/* Error Message */}
+          {error && <div className="text-red-500 mb-4">Error fetching degrees. Please try again later.</div>}
+
+          {/* Render Degrees from API */}
+          {degrees.length > 0 ? (
+            degrees.map((degree) => (
+              <div key={degree.id} onClick={toggleMaps} className="cursor-pointer p-2 rounded-lg mb-2">
+
+                {/* Degree description */}
+                <div className="font-semibold" onClick={() => toggleMaps(degree.id)}>{degree.description}</div>
+
+                {/* Evaluation Maps of Degree (Sub-options) */}
+                {degree.isMapsVisible && degree.maps && (
+                  <div className="ml-4 mt-2">
+                    <ul className="pl-4">
+                        {degree.maps.map((map, index) => (
+                            <li
+                               key={index}
+                               className="text-gray-700 text-sm cursor-pointer"
+                               onClick={() => handleMapClick(map)} // Handle map click
+                            >
+                            {map.lectiveyear} {map.semester.description} {map.period.description}
+                            </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500">Loading degrees...</div>
+          )}
+        </div>
+      )}
+    {/* Conditionally render the NewGrid component when an evaluation is selected */}
+    {selectedMap && <NewGrid map={selectedMap} />}
     </div>
-    
-    
   );
 };
-
-
