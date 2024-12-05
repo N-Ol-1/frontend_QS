@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { NewGrid } from './NewGrid';  // Import the named export
 
-export const Sidebar = ({ isSidebarVisible, setSidebarVisible }) => {
+export const Sidebar = ({ isSidebarVisible, setSidebarVisible, onMapSelect }) => {
   // States for managing dropdown visibility and degrees data
   const [degrees, setDegrees] = useState([]); // State to store degree data
-  const [selectedMap, setSelectedMap] = useState(null); // Store selected map
   const [error, setError] = useState(false); // To handle errors if the API call fails
 
   // Fetch degrees data from the API
@@ -39,63 +38,59 @@ export const Sidebar = ({ isSidebarVisible, setSidebarVisible }) => {
     );
   };
 
-    // Handle when a map is clicked
+   /*  // Handle when a map is clicked
     const handleMapClick = (map) => {
       setSelectedMap(map); // Set the selected map to state
       setSidebarMap(false); // Optionally close the sidebar after clicking
-    };
+    }; */
 
   return (
-    <div>
-      {/* Sidebar */}
-      {isSidebarVisible && (
-        <div className="w-64 bg-white h-screen p-4 border-r absolute">
-          <div className="grid grid-cols-2">
-            <h2 className="text-xl font-semibold mb-4">Cursos</h2>
-            <button
-              className="text-3xl justify-self-end text-right"
-              onClick={() => setSidebarVisible(false)}
-            >
-              x
-            </button>
-          </div>
-
-          {/* Error Message */}
-          {error && <div className="text-red-500 mb-4">Error fetching degrees. Please try again later.</div>}
-
-          {/* Render Degrees from API */}
-          {degrees.length > 0 ? (
-            degrees.map((degree) => (
-              <div key={degree.id} onClick={toggleMaps} className="cursor-pointer p-2 rounded-lg mb-2">
-
-                {/* Degree description */}
-                <div className="font-semibold" onClick={() => toggleMaps(degree.id)}>{degree.description}</div>
-
-                {/* Evaluation Maps of Degree (Sub-options) */}
-                {degree.isMapsVisible && degree.maps && (
-                  <div className="ml-4 mt-2">
-                    <ul className="pl-4">
-                        {degree.maps.map((map, index) => (
-                            <li
-                               key={index}
-                               className="text-gray-700 text-sm cursor-pointer"
-                               onClick={() => handleMapClick(map)} // Handle map click
-                            >
-                            {map.lectiveyear} {map.semester.description} {map.period.description}
-                            </li>
-                        ))}
-                    </ul>
-                  </div>
-                )}
+        <div>
+          {/* Sidebar */}
+          {isSidebarVisible && (
+            <div
+                  className={`fixed top-20 left-0 h-full w-64 bg-[#fafafa] px-4 text-black transform ${
+                    isSidebarVisible ? 'translate-x-0' : '-translate-x-full'
+                  } transition-transform duration-300 z-40`}
+                >
+              <div className="grid grid-cols-2">
+                <h2 className="text-xl font-semibold mb-4">Escolher curso:</h2>
               </div>
-            ))
-          ) : (
-            <div className="text-gray-500">Loading degrees...</div>
+
+              {/* Error Message */}
+              {error && <div className="text-red-500 mb-4">Error fetching degrees. Please try again later.</div>}
+
+              {/* Render Degrees from API */}
+              {degrees.length > 0 ? (
+                degrees.map((degree) => (
+                  <div key={degree.id} onClick={toggleMaps} className="cursor-pointer p-2 rounded-lg mb-2">
+
+                    {/* Degree description */}
+                    <div className="font-semibold" onClick={() => toggleMaps(degree.id)}>{degree.description}</div>
+
+                    {/* Evaluation Maps of Degree (Sub-options) */}
+                    {degree.isMapsVisible && degree.maps && (
+                      <div className="ml-4 mt-2">
+                        <ul className="pl-4">
+                            {degree.maps.map((map, index) => (
+                                <li
+                                   key={index}
+                                   className="text-gray-700 text-sm cursor-pointer"
+                                   onClick={() => onMapSelect(map)} // Handle map click
+                                >
+                                {map.lectiveyear} {map.semester.description} {map.period.description}
+                                </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-500">Loading degrees...</div>
+              )}
+            </div>
           )}
         </div>
-      )}
-    {/* Conditionally render the NewGrid component when an evaluation is selected */}
-    {selectedMap && <NewGrid map={selectedMap} />}
-    </div>
   );
 };
