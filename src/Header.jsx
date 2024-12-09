@@ -10,6 +10,13 @@ export const Header = ({ isSidebarVisible, setSidebarVisible }) => {
       >
         {isSidebarVisible ? 'Esconder mapas' : 'Consultar mapas'}
       </button>
+
+      <button
+          className="text-lg px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-black"
+          onClick={() => setSidebarVisible(true)}
+       >
+         Criar mapas
+      </button>
       {/* Header Title */}
       <div className="text-3xl text-[#50aeea] flex-grow text-center">
         UPT - Mapas de Avaliação
