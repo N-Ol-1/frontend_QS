@@ -53,7 +53,7 @@ export const NewGrid = ({ map }) => {
                   {unit.description}
                 </div>
                 <div
-                  key={`${unit.id}-assessment`}
+                  key={`${unit.id}-assessmentType`}
                   className='h-16 border border-gray-300 col-span-1 text-center w-full bg-slate-100 flex items-center justify-center text-xs'
                 >
                   {unit.assessmentType.description}
@@ -112,7 +112,7 @@ export const NewGrid = ({ map }) => {
                         {unit.description}
                       </div>
                       <div
-                        key={`${unit.id}-assessment`}
+                        key={`${unit.id}-assessmentType`}
                         className='h-16 border border-gray-300 col-span-1 text-center w-full bg-slate-200 flex items-center justify-center text-xs'
                       >
                         {unit.assessmentType.description}
@@ -156,7 +156,7 @@ export const NewGrid = ({ map }) => {
 
       <div className=' rounded-sm w-full bg-slate-400 row-span-5 text-center flex items-center justify-center'>3º ano</div>
             {map.curricularUnits
-                      .filter((unit) => unit.year === "1") // Filter units where year is 1
+                      .filter((unit) => unit.year === "3") // Filter units where year is 1
                       .map((unit) => {
                         // Ensure placeholders are only calculated for units with fewer than 4 assessments
                         const placeholders = 4 - unit.assessments.length;
@@ -171,7 +171,7 @@ export const NewGrid = ({ map }) => {
                               {unit.description}
                             </div>
                             <div
-                              key={`${unit.id}-assessment`}
+                              key={`${unit.id}-assessmentType`}
                               className='h-16 border border-gray-300 col-span-1 text-center w-full bg-slate-100 flex items-center justify-center text-xs'
                             >
                               {unit.assessmentType.description}

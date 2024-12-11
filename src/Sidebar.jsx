@@ -75,7 +75,7 @@ export const Sidebar = ({ isSidebarVisible, setSidebarVisible, onMapSelect }) =>
                             {degree.maps.map((map, index) => (
                                 <li
                                    key={index}
-                                   className="text-gray-700 text-sm cursor-pointer"
+                                   className="text-gray-700 text-sm cursor-pointer  mb-2"
                                    onClick={() => onMapSelect(map)} // Handle map click
                                 >
                                 {map.lectiveyear} {map.semester.description} {map.period.description}
