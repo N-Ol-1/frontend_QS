@@ -67,7 +67,6 @@ export const NewGrid = ({ map }) => {
 const renderYearGrid = (year, units) => {
   const unitCount = Object.keys(units).length;  // Count the number of units for the year
   const rowSpanValue = unitCount;
-  console.log("Row span:", rowSpanValue); //
   return (
     <React.Fragment key={year}>
       <div className="col-span-25 bg-slate-400 text-center flex items-center justify-center" style={{ gridRow: `span ${rowSpanValue}` }}>
