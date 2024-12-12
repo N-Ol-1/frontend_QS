@@ -8,44 +8,65 @@ const NewAssessment = ({ map }) => {
     const [assessments, setAssessments] = useState([]);
 
     useEffect(() => {
-        // Fetch curricular units for the degree and semester
-        axios.get(`http://localhost:8080/api/v1/curricularUnits`, {
-            params: {
-                degreeId: map.degree.id,
-                semesterId: map.semester.id,
-            },
-        })
-        .then((response) => setCurricularUnits(response.data))
-        .catch((error) => console.error('Error fetching curricular units:', error));
+        axios.get(`http://localhost:8080/api/v1/curricularUnits`)
+            .then((response) => {
+                const allUnits = response.data;
+                console.log("Curricular Units:", allUnits);
+
+                // Filter units by degreeId and semesterId
+                const filteredUnits = allUnits.filter(
+                    (unit) =>
+                        unit.degree.id === map.degree.id &&
+                        unit.semester.id === map.semester.id
+                );
+                setCurricularUnits(filteredUnits);
+            })
+            .catch((error) => console.error('Error fetching curricular units:', error));
 
         // Fetch assessment classifications
         axios.get(`http://localhost:8080/api/v1/assessmentClassifications`)
-            .then((response) => setAssessmentClassifications(response.data))
+            .then((response) => {
+                setAssessmentClassifications(response.data);
+            })
             .catch((error) => console.error('Error fetching assessment classifications:', error));
     }, [map]);
 
     const initializeAssessments = (unitId) => {
-        // Initialize 4 possible assessments for the selected curricular unit
-        const initialAssessments = Array.from({ length: 4 }, (_, index) => ({
-            curricularUnitId: unitId,
-            classification: '',
+        const initialAssessments = Array.from({ length: 4 }, () => ({
+            curricularUnit: unitId, // Directly store unitId here
+            assessmentClassification: '', // Default empty
             weight: '',
             date: '',
             time: '',
             classroom: '',
+            mapId: map.id,
         }));
         setAssessments(initialAssessments);
     };
 
     const handleInputChange = (index, field, value) => {
         const updatedAssessments = [...assessments];
-        updatedAssessments[index][field] = value;
+        updatedAssessments[index][field] =
+            field === 'assessmentClassification' || field === 'curricularUnit'
+                ? parseInt(value, 10) || '' // Parse integer and fallback to ''
+                : value;
         setAssessments(updatedAssessments);
+        console.log('Updated Assessments:', updatedAssessments);
     };
 
     const handleSubmit = () => {
+        console.log('Assessments before submission:', assessments);
+
+        // Filter valid assessments
         const validAssessments = assessments.filter(
-            (a) => a.classification && a.weight && a.date && a.time && a.classroom
+            (a) =>
+                a.assessmentClassification &&
+                !isNaN(parseInt(a.assessmentClassification, 10)) &&
+                a.weight &&
+                !isNaN(parseFloat(a.weight)) &&
+                a.date &&
+                a.time &&
+                a.classroom
         );
 
         if (validAssessments.length < 2) {
@@ -53,9 +74,27 @@ const NewAssessment = ({ map }) => {
             return;
         }
 
-        axios.post('http://localhost:8080/api/v1/assessments', validAssessments)
-            .then(() => alert('Assessments added successfully!'))
-            .catch((error) => console.error('Error adding assessments:', error));
+        // Transform assessments into the API's expected format
+        const payloads = validAssessments.map((assessment) => ({
+            curricularUnit: { id: assessment.curricularUnit }, // Already stored as number
+            map: { id: map.id },
+            assessmentClassification: { id: assessment.assessmentClassification }, // Already parsed
+            weight: parseFloat(assessment.weight),
+            date: assessment.date,
+            time: assessment.time,
+            classroom: assessment.classroom,
+        }));
+
+        console.log('Payloads:', payloads);
+
+        // Post each valid assessment individually
+        payloads.forEach((payload) => {
+            axios.post('http://localhost:8080/api/v1/assessments', payload)
+                .then(() => console.log('Assessment added successfully:', payload))
+                .catch((error) => console.error('Error adding assessment:', payload, error));
+        });
+
+        alert('Avaliações adicionadas ao mapa!');
     };
 
     return (
@@ -65,8 +104,9 @@ const NewAssessment = ({ map }) => {
                 <label>Curricular Unit:</label>
                 <select
                     onChange={(e) => {
-                        setSelectedUnit(e.target.value);
-                        initializeAssessments(e.target.value);
+                        const selectedId = parseInt(e.target.value, 10); // Convert to integer
+                        setSelectedUnit(selectedId);
+                        initializeAssessments(selectedId);
                     }}
                 >
                     <option value="">Select Curricular Unit</option>
@@ -77,20 +117,20 @@ const NewAssessment = ({ map }) => {
             </div>
             {selectedUnit && (
                 <div>
-                    <h3>Assessments for {curricularUnits.find(u => u.id === parseInt(selectedUnit))?.description}</h3>
+                    <h3>Assessments for {curricularUnits.find(u => u.id === selectedUnit)?.description}</h3>
                     {assessments.map((assessment, index) => (
                         <div key={index} style={{ border: '1px solid #ddd', padding: '10px', marginBottom: '10px' }}>
                             <h4>Assessment {index + 1}</h4>
                             <div>
                                 <label>Classification:</label>
                                 <select
-                                    value={assessment.classification}
-                                    onChange={(e) => handleInputChange(index, 'classification', e.target.value)}
+                                    value={assessment.assessmentClassification}
+                                    onChange={(e) => handleInputChange(index, 'assessmentClassification', e.target.value)}
                                 >
                                     <option value="">Select Classification</option>
                                     {assessmentClassifications.map((classification) => (
                                         <option key={classification.id} value={classification.id}>
-                                            {classification.name}
+                                            {classification.description}
                                         </option>
                                     ))}
                                 </select>
@@ -137,3 +177,4 @@ const NewAssessment = ({ map }) => {
 };
 
 export default NewAssessment;
+
