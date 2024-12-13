@@ -5,6 +5,20 @@ export const NewGrid = ({ map }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Helper functions for formatting
+  const formatDateForDisplay = (isoDate) => {
+    if (!isoDate) return '';
+    const [year, month, day] = isoDate.split('-');
+    return `${day}-${month}-${year}`;
+  };
+
+  const formatTimeForDisplay = (time) => {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    return `${hours}h${minutes}m`;
+  };
+
+
   useEffect(() => {
     if (map && map.id) {
       const fetchMapData = async () => {
@@ -84,19 +98,19 @@ const renderYearGrid = (year, units) => {
 
           {assessments.map((assessment) => (
             <React.Fragment key={assessment.id}>
-              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16">
+              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16 text-xs">
                 {assessment.assessmentClassification.description}
               </div>
-              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16">
+              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16 text-xs">
                 {assessment.weight}%
               </div>
-              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16">
-                {assessment.date}
+              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16 text-xs">
+                {formatDateForDisplay(assessment.date)}
               </div>
-              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16">
-                {assessment.time}
+              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16 text-xs">
+                {formatTimeForDisplay(assessment.time)}
               </div>
-              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16">
+              <div className="bg-slate-100 border border-gray-300 flex items-center justify-center w-full h-16 text-xs">
                 {assessment.classroom}
               </div>
             </React.Fragment>
