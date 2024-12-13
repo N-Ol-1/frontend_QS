@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NewAssessment from './NewAssessment';
 
-const NewMap = () => {
+const NewMap = ({ onUpdate, setNewMapVisible }) => {
     const [formData, setFormData] = useState({
         lectiveYear: '',
         semester: '',
@@ -70,9 +70,12 @@ const NewMap = () => {
         console.log('Form Data:', mapPayload);
         try {
             const response = await axios.post('http://localhost:8080/api/v1/maps', mapPayload);
-            console.log('Map posted successfully:', response.data);
             alert('Map created successfully!');
             setCreatedMap(response.data);
+
+            if (onUpdate) {
+                onUpdate(); // Notify parent about the update
+            }
         } catch (error) {
             console.error('Error posting map:', error);
             alert('Failed to create map. Please try again.');
@@ -81,88 +84,114 @@ const NewMap = () => {
 
 
     return (
-        <div>
-            <h1>Novo Mapa</h1>
-            <form onSubmit={handleSubmit}>
-                {/* Lective Year Dropdown */}
-                <div>
-                    <label htmlFor="lectiveYear">Lective Year:</label>
-                    <select
-                        id="lectiveYear"
-                        name="lectiveYear"
-                        value={formData.lectiveYear}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Select Lective Year</option>
-                        {lectiveYears.map((year, index) => (
-                            <option key={index} value={year}>
-                                {year}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+<div className="flex justify-center items-center h-screen ">
+    <div className="w-96 p-6 rounded-lg shadow-md">
+        <h1 className="text-center text-2xl font-semibold mb-6">Novo Mapa</h1>
+        <form onSubmit={handleSubmit}>
+            {/* Lective Year Dropdown */}
+            <div className="mb-4">
+                <label htmlFor="lectiveYear" className="block text-sm font-medium text-gray-700 mb-1">
+                    Ano Letivo:
+                </label>
+                <select
+                    id="lectiveYear"
+                    name="lectiveYear"
+                    value={formData.lectiveYear}
+                    onChange={handleChange}
+                    required
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="">Selecionar ano letivo</option>
+                    {lectiveYears.map((year, index) => (
+                        <option key={index} value={year}>
+                            {year}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-                {/* Semester Dropdown */}
-                <div>
-                    <label htmlFor="semester">Semester:</label>
-                    <select
-                        id="semester"
-                        name="semester"
-                        value={formData.semester}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Select Semester</option>
-                        {semesters.map((semester) => (
-                            <option key={semester.id} value={semester.name}>
-                                {semester.description}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            {/* Semester Dropdown */}
+            <div className="mb-4">
+                <label htmlFor="semester" className="block text-sm font-medium text-gray-700 mb-1">
+                    Semestre:
+                </label>
+                <select
+                    id="semester"
+                    name="semester"
+                    value={formData.semester}
+                    onChange={handleChange}
+                    required
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="">Selecionar Semestre</option>
+                    {semesters.map((semester) => (
+                        <option key={semester.id} value={semester.name}>
+                            {semester.description}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-                {/* Period Dropdown */}
-                <div>
-                    <label htmlFor="period">Period:</label>
-                    <select
-                        id="period"
-                        name="period"
-                        value={formData.period}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Select Period</option>
-                        {periods.map((period) => (
-                            <option key={period.id} value={period.name}>
-                                {period.description}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            {/* Period Dropdown */}
+            <div className="mb-4">
+                <label htmlFor="period" className="block text-sm font-medium text-gray-700 mb-1">
+                    Época:
+                </label>
+                <select
+                    id="period"
+                    name="period"
+                    value={formData.period}
+                    onChange={handleChange}
+                    required
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="">Selecionar época</option>
+                    {periods.map((period) => (
+                        <option key={period.id} value={period.name}>
+                            {period.description}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-                {/* Degree Dropdown */}
-                <div>
-                    <label htmlFor="degree">Degree:</label>
-                    <select
-                        id="degree"
-                        name="degree"
-                        value={formData.degree}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Select Degree</option>
-                        {degrees.map((degree) => (
-                            <option key={degree.id} value={degree.name}>
-                                {degree.description}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            {/* Degree Dropdown */}
+            <div className="mb-6">
+                <label htmlFor="degree" className="block text-sm font-medium text-gray-700 mb-1">
+                    Curso:
+                </label>
+                <select
+                    id="degree"
+                    name="degree"
+                    value={formData.degree}
+                    onChange={handleChange}
+                    required
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="">Selecionar curso</option>
+                    {degrees.map((degree) => (
+                        <option key={degree.id} value={degree.name}>
+                            {degree.description}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+            <button
+                type="submit"
+                className="w-full bg-[#50aeea] hover:bg-[#20aeea] text-white font-medium py-2 px-4 rounded-md"
+            >
+                Criar Mapa
+            </button>
+            <button
+              className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
+              onClick={() => setNewMapVisible(false)} // Close the modal
+            >
+              Sair
+            </button>
+        </form>
+    </div>
+</div>
+
     );
 };
 

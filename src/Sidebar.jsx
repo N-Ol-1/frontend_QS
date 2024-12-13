@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NewGrid } from './NewGrid';  // Import the named export
 
-export const Sidebar = ({ isSidebarVisible, setSidebarVisible, onMapSelect }) => {
+export const Sidebar = ({ isSidebarVisible, setSidebarVisible, onMapSelect, dataUpdated }) => {
   // States for managing dropdown visibility and degrees data
   const [degrees, setDegrees] = useState([]); // State to store degree data
   const [error, setError] = useState(false); // To handle errors if the API call fails
@@ -22,7 +22,7 @@ export const Sidebar = ({ isSidebarVisible, setSidebarVisible, onMapSelect }) =>
     };
 
     fetchDegrees();
-  }, []);
+  }, [dataUpdated]);
 
   // Function to toggle the visibility of evaluations for a specific degree
   const toggleMaps = (degreeId) => {
