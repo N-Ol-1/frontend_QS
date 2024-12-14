@@ -20,10 +20,6 @@ function App() {
     setDataUpdated((prev) => !prev); // Trigger Sidebar refresh
   };
 
-  /* const handleNewAssessmentClose = () => {
-    setNewAssessmentVisible(false); // Hide NewAssessment
-  }; */
-
   return (
     <div className="relative">
       <Header
@@ -44,14 +40,15 @@ function App() {
           {mapData && <NewGrid map={mapData} />}
           {isNewMapVisible && (
             <div className="fixed top-20 left-0 w-full h-[calc(100%-80px)] bg-white z-40 p-4 overflow-auto">
-              <NewMap onUpdate={handleDataUpdate} setNewMapVisible={setNewMapVisible} />
+              <NewMap onUpdate={handleDataUpdate} setNewMapVisible={setNewMapVisible} setNewAssessmentVisible={setNewAssessmentVisible}  />
             </div>
           )}
-          {isNewAssessmentVisible && (
-            <NewAssessment map={mapData} onClose={handleNewAssessmentClose} />
-          )}
+            {/* {isNewAssessmentVisible && (
+            <div className="fixed top-20 left-0 w-full h-[calc(100%-80px)] bg-white z-40 p-4 overflow-auto">
+              <NewAssessment map={mapData}  setNewAssessmentVisible={setNewAssessmentVisible} />
+            </div>
+          )} */}
         </div>
-
       </div>
     </div>
   );

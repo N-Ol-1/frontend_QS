@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const NewAssessment = ({ map, setNewAssessmentVisible }) => {
+
     const [curricularUnits, setCurricularUnits] = useState([]);
     const [selectedUnit, setSelectedUnit] = useState('');
     const [assessmentClassifications, setAssessmentClassifications] = useState([]);
@@ -11,7 +12,6 @@ const NewAssessment = ({ map, setNewAssessmentVisible }) => {
         axios.get(`http://localhost:8080/api/v1/curricularUnits`)
             .then((response) => {
                 const allUnits = response.data;
-                console.log("Curricular Units:", allUnits);
 
                 // Filter units by degreeId and semesterId
                 const filteredUnits = allUnits.filter(
@@ -160,8 +160,9 @@ const handleSubmit = async () => {
         const confirmExit = window.confirm(
             'Já adicionou todas as avaliações ao mapa?\nClique em "OK" para sair ou "Cancelar" para continuar.'
         );
+        console.log('confirmExit:', confirmExit);
         if (confirmExit) {
-            onClose()
+            setNewAssessmentVisible(false);
         }
     };
 
@@ -270,7 +271,7 @@ const handleSubmit = async () => {
         Adicionar Avaliações
     </button>
     <button
-        className="bg-red-500 text-white font-bold py-2 px-4 rounded"
+        className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mt-6 items-center max-w-xs sm:max-w-sm lg:max-w-md xl:max-w-lg"
         onClick={handleClose}
     >
         Sair
