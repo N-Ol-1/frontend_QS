@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NewAssessment from './NewAssessment';
 
-const NewMap = ({ onUpdate, setNewMapVisible }) => {
+const NewMap = ({ onUpdate, setNewMapVisible, setNewAssessmentVisible }) => {
     const [formData, setFormData] = useState({
         lectiveYear: '',
         semester: '',
@@ -15,6 +15,7 @@ const NewMap = ({ onUpdate, setNewMapVisible }) => {
     const [degrees, setDegrees] = useState([]);
     const [lectiveYears, setLectiveYears] = useState([]);
     const [createdMap, setCreatedMap] = useState(null); // Store created map details
+    const [showAssessment, setShowAssessment] = useState(false); // Toggle to show NewAssessment
 
     // Fetch options from the API
     useEffect(() => {
@@ -45,11 +46,6 @@ const NewMap = ({ onUpdate, setNewMapVisible }) => {
         setFormData({ ...formData, [name]: value });
     };
 
-    if (createdMap) {
-        // Redirect to NewAssessment after creating the map
-        return <NewAssessment map={createdMap} />;
-    }
-
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -76,12 +72,17 @@ const NewMap = ({ onUpdate, setNewMapVisible }) => {
             if (onUpdate) {
                 onUpdate(); // Notify parent about the update
             }
+            setShowAssessment(true); // Switch to NewAssessment
         } catch (error) {
             console.error('Error posting map:', error);
             alert('Failed to create map. Please try again.');
         }
     };
 
+    if (showAssessment && createdMap) {
+        // Render the NewAssessment component
+        return <NewAssessment map={createdMap} setNewAssessmentVisible={setShowAssessment}/>;
+    }
 
     return (
 <div className="flex justify-center items-center h-screen ">
