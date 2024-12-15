@@ -1,46 +1,41 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-export const login = () => {
-  const [isSigningUp, setIsSigningUp] = useState(false); // Alterna entre Login e Sign Up
-  const [name, setName] = useState(''); // Campo de nome para Sign Up
+export const Login = () => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isSigningUp) {
-      console.log('Sign Up action:');
-      console.log('Name:', name);
-      console.log('Email:', email);
-      console.log('Password:', password);
-    } else {
-      console.log('Log In action:');
-      console.log('Email:', email);
-      console.log('Password:', password);
-    }
+  // Initialize navigate using the useNavigate hook
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+        const response = await axios.post('http://localhost:8080/api/v1/login', { email, password });
+        if (response.data.userType === 'admin') {
+          navigate('/admin'); // Redirect to Admin page */
+        } else if (response.data.userType === 'user') {
+          navigate('/user'); // Redirect to User page */
+        }
+      } catch (error) {
+        alert(error.response?.data?.message || 'Erro a fazer o Login');
+      }
+
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-slate-200">
+    <div className="flex items-center justify-center h-screen bg-[url('./upt_background.jpg')] bg-cover bg-center">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          {isSigningUp ? 'Sign Up' : 'Mapas de Avaliação da Universidade Portucalense'}
+        <h2 className="text-2xl font-bold text-start mb-6">
+          Mapas de Avaliação da Universidade Portucalense
         </h2>
         <form onSubmit={handleSubmit}>
-          {/* Campo de Nome apenas no modo Sign Up */}
-          {isSigningUp && (
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              />
-            </div>
-          )}
+
+
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -65,19 +60,15 @@ export const login = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 mb-2"
+            className="w-full bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 mb-2"
           >
-            {isSigningUp ? 'Sign Up' : 'Log In'}
+            Log In
           </button>
-          <button
-            type="button"
-            onClick={() => setIsSigningUp(!isSigningUp)}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
-          >
-            {isSigningUp ? 'Switch to Log In' : 'Switch to Sign Up'}
-          </button>
+          {error && ( // Display the error message
+              <p className="text-red-500 text-sm mt-2">{error}</p>
+          )}
         </form>
       </div>
-    </div>
-  );
+  </div>
+);
 };

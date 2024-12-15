@@ -66,7 +66,7 @@ const NewMap = ({ onUpdate, setNewMapVisible, setNewAssessmentVisible }) => {
         console.log('Form Data:', mapPayload);
         try {
             const response = await axios.post('http://localhost:8080/api/v1/maps', mapPayload);
-            alert('Map created successfully!');
+            alert('Map criado com sucesso!');
             setCreatedMap(response.data);
 
             if (onUpdate) {
@@ -75,7 +75,7 @@ const NewMap = ({ onUpdate, setNewMapVisible, setNewAssessmentVisible }) => {
             setShowAssessment(true); // Switch to NewAssessment
         } catch (error) {
             console.error('Error posting map:', error);
-            alert('Failed to create map. Please try again.');
+            alert('Erro ao criar mapa. Por favor tente outra vez.');
         }
     };
 
