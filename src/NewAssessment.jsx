@@ -70,7 +70,7 @@ const handleSubmit = async () => {
     );
 
     if (validAssessments.length === 0) {
-        alert('No valid assessments found. Please fill in the details correctly.');
+        alert('Avaliações inválidas. Por favor, preencha os detalhes corretamente.');
         return;
     }
 
@@ -78,7 +78,7 @@ const handleSubmit = async () => {
     const totalWeight = validAssessments.reduce((sum, a) => sum + parseFloat(a.weight), 0);
 
     if (totalWeight !== 100) {
-        alert(`The total weight of the assessments must equal 100%. Current total: ${totalWeight}%.`);
+        alert(` A soma das ponderações deve ser 100%. Soma atual: ${totalWeight}%.`);
         return;
     }
 
@@ -86,16 +86,24 @@ const handleSubmit = async () => {
     const selectedCurricularUnit = curricularUnits.find((unit) => unit.id === selectedUnit);
 
     if (!selectedCurricularUnit) {
-        alert('Please select a valid curricular unit.');
+        alert('Por favor, selecione uma unidade curricular válida.');
         return;
     }
 
     const assessmentTypeId = selectedCurricularUnit.assessmentType?.id;
 
+    if (assessmentTypeId === 2) {
+        if (validAssessments.length < 3) {
+            alert('Para cadeiras com avaliação contínua devem existir pelo menos 3 momentos de avaliação.');
+            return;
+        }
+    }
+
+
     // Validation logic for assessmentType.id === 1
     if (assessmentTypeId === 1) {
         if (validAssessments.length < 2) {
-            alert('For assessment type 1, there must be at least 2 valid assessments.');
+            alert('Para cadeiras com avaliação mista devem existir pelo menos 2 momentos de avaliação.');
             return;
         }
 
@@ -109,7 +117,7 @@ const handleSubmit = async () => {
             mapPeriodDates = mapPeriodResponse.data;
         } catch (error) {
             console.error('Error fetching map period data:', error);
-            alert('Could not validate map period date ranges. Please try again.');
+            alert('Não foi possível avaliar os intervalos entre as datas das épocas. Por favor tente outra vez.');
             return;
         }
 
@@ -158,7 +166,7 @@ const handleSubmit = async () => {
 
      const handleClose = () => {
         const confirmExit = window.confirm(
-            'Já adicionou todas as avaliações ao mapa?\nClique em "OK" para sair ou "Cancelar" para continuar.'
+            'Já adicionou todas as avaliações ao mapa?\nClique em "OK" para terminar ou "Cancelar" para continuar.'
         );
         console.log('confirmExit:', confirmExit);
         if (confirmExit) {
@@ -274,7 +282,7 @@ const handleSubmit = async () => {
         className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mt-6 items-center max-w-xs sm:max-w-sm lg:max-w-md xl:max-w-lg"
         onClick={handleClose}
     >
-        Sair
+        Terminar
     </button>
 </div>
 
